@@ -34,6 +34,40 @@
     </div>
 </div>
 
+<!-- Daftar Collection Point -->
+<div class="px-10 mt-10">
+    <p class="font-poppins font-medium text-gray-800 text-[24px] mb-4">Daftar Collection Point</p>
+    @if($collectionPoints->isEmpty())
+    <p class="text-gray-500">Tidak ada data collection point.</p>
+    @else
+    <div class="overflow-x-auto">
+        <table class="min-w-full table-auto bg-white shadow-md rounded-md">
+            <thead class="bg-primary-green text-white text-left">
+                <tr>
+                    <th class="py-3 px-4">Nama</th>
+                    <th class="py-3 px-4">Tipe</th>
+                    <th class="py-3 px-4">Latitude</th>
+                    <th class="py-3 px-4">Longitude</th>
+                    <th class="py-3 px-4">Deskripsi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($collectionPoints as $point)
+                <tr class="border-b hover:bg-gray-100">
+                    <td class="py-2 px-4">{{ $point->name }}</td>
+                    <td class="py-2 px-4">{{ $point->type }}</td>
+                    <td class="py-2 px-4">{{ $point->lat }}</td>
+                    <td class="py-2 px-4">{{ $point->lng }}</td>
+                    <td class="py-2 px-4">{{ $point->description }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    @endif
+</div>
+
+
 <!-- Grafik Sampah TPS dan TPA -->
 <div class="px-10 w-full">
     <canvas id="grafikSampah"></canvas>
