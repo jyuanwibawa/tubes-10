@@ -19,6 +19,13 @@ Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('adm
 
 
 
+Route::get('/collection-points', [MapController::class, 'index'])->name('collection-points.index');
+Route::get('/collection-points/create', [MapController::class, 'create'])->name('collection-points.create');
+Route::post('/collection-points', [MapController::class, 'store'])->name('collection-points.store');
+Route::get('/collection-points/{id}/edit', [MapController::class, 'edit'])->name('collection-points.edit');
+Route::put('/collection-points/{id}', [MapController::class, 'update'])->name('collection-points.update');
+Route::delete('/collection-points/{id}', [MapController::class, 'destroy'])->name('collection-points.destroy');
+
 // Redirect ke /home
 Route::get('/', [HomeController::class, 'index'])->name('home');
 

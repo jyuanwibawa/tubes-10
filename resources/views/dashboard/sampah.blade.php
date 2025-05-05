@@ -4,7 +4,7 @@
 <p class="font-poppins font-medium text-gray-800 text-[28px] ms-10 mb-6">Grafik Sampah</p>
 
 <!-- Kartu untuk Sampah TPS dan TPA -->
-<div class="px-10 w-full flex flex-row gap-x-8 mb-6">
+<div class="px-10 w-full flex flex-row gap-x-8 mb-10">
     <!-- Kartu Sampah TPS -->
     <div
         class="border-s-4 border-s-primary-green px-6 flex flex-row py-8 w-full justify-between shadow-md bg-white rounded-md">
@@ -35,30 +35,36 @@
 </div>
 
 <!-- Daftar Collection Point -->
-<div class="px-10 mt-10">
-    <p class="font-poppins font-medium text-gray-800 text-[24px] mb-4">Daftar Collection Point</p>
+<div class="px-10 mt-6">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4 font-poppins">Daftar Collection Point</h2>
+
     @if($collectionPoints->isEmpty())
     <p class="text-gray-500">Tidak ada data collection point.</p>
     @else
-    <div class="overflow-x-auto">
-        <table class="min-w-full table-auto bg-white shadow-md rounded-md">
-            <thead class="bg-primary-green text-white text-left">
+    <div class="overflow-x-auto bg-white rounded-md shadow-md">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-primary-green text-white">
                 <tr>
-                    <th class="py-3 px-4">Nama</th>
-                    <th class="py-3 px-4">Tipe</th>
-                    <th class="py-3 px-4">Latitude</th>
-                    <th class="py-3 px-4">Longitude</th>
-                    <th class="py-3 px-4">Deskripsi</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold">Nama</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold">Tipe</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold">Latitude</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold">Longitude</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold">Deskripsi</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
                 @foreach ($collectionPoints as $point)
-                <tr class="border-b hover:bg-gray-100">
-                    <td class="py-2 px-4">{{ $point->name }}</td>
-                    <td class="py-2 px-4">{{ $point->type }}</td>
-                    <td class="py-2 px-4">{{ $point->lat }}</td>
-                    <td class="py-2 px-4">{{ $point->lng }}</td>
-                    <td class="py-2 px-4">{{ $point->description }}</td>
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="px-6 py-4">{{ $point->name }}</td>
+                    <td class="px-6 py-4">
+                        <span
+                            class="px-2 py-1 rounded-full text-white text-xs {{ $point->type === 'TPA' ? 'bg-red-500' : 'bg-blue-500' }}">
+                            {{ $point->type }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">{{ $point->lat }}</td>
+                    <td class="px-6 py-4">{{ $point->lng }}</td>
+                    <td class="px-6 py-4">{{ $point->description }}</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -67,52 +73,58 @@
     @endif
 </div>
 
-
-<!-- Grafik Sampah TPS dan TPA -->
-<div class="px-10 w-full">
-    <canvas id="grafikSampah"></canvas>
+<!-- Grafik Sampah -->
+<div class="px-10 mt-10 bg-white shadow-md rounded-md p-6">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4 font-poppins">Grafik Jumlah Sampah per Bulan</h2>
+    <div class="overflow-x-auto">
+        <canvas id="grafikSampah" height="400"></canvas>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const canvas = document.getElementById('grafikSampah');
-
-        // Menyesuaikan ukuran canvas
-        canvas.width = window.innerWidth - 50; // Lebar canvas disesuaikan dengan lebar layar
-        canvas.height = 400; // Tinggi tetap 400px
-
-        const ctx = canvas.getContext('2d');
-        const chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: @json($months), // Label bulan 1 - 12
-                datasets: [{
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('grafikSampah').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: @json($months),
+            datasets: [{
                     label: 'Sampah TPS',
-                    data: @json($dataTPS), // Data jumlah sampah TPS
-                    borderColor: 'rgb(255, 99, 132)', // Warna garis TPS
+                    data: @json($dataTPS),
+                    borderColor: 'rgb(255, 99, 132)',
                     fill: false,
-                }, {
+                    tension: 0.3
+                },
+                {
                     label: 'Sampah TPA',
-                    data: @json($dataTPA), // Data jumlah sampah TPA
-                    borderColor: 'rgb(54, 162, 235)', // Warna garis TPA
+                    data: @json($dataTPA),
+                    borderColor: 'rgb(54, 162, 235)',
                     fill: false,
-                }]
-            },
-            options: {
-                responsive: true, // Menyesuaikan grafik dengan ukuran layar
-                maintainAspectRatio: false, // Tidak mempertahankan rasio aspek tetap
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                    },
-                    y: {
-                        beginAtZero: true,
+                    tension: 0.3
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Bulan'
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Jumlah Sampah'
                     }
                 }
             }
-        });
+        }
     });
+});
 </script>
 @endsection
